@@ -1,9 +1,9 @@
-class SpringShape {
+class Body {
     ArrayList<SpringJoint> joints;
     ArrayList<Spring> springs;
     boolean creating = true;
 
-    SpringShape() {
+    Body() {
         joints = new ArrayList();
         springs = new ArrayList();
     }
@@ -26,11 +26,19 @@ class SpringShape {
         if(creating) return;
 
         for(int i = 0; i < springs.size(); i++) {
-            springs.get(i).update();
+            springs.get(i).applyForce();
         }
 
         for(int i = 0; i < joints.size(); i++) {
             joints.get(i).update();
+        }
+    }
+
+    void applyForce(PVector force) {
+        if(creating) return;
+
+        for(int i = 0; i < joints.size(); i++) {
+            joints.get(i).applyForce(force);
         }
     }
 

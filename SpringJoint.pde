@@ -1,23 +1,23 @@
 class SpringJoint {
     PVector position;
-    PVector velocity = new PVector(random(-1, 1), random(-1, 1));
+    PVector acceleration;
+    PVector velocity;
 
+    float mass = 10.0;
     float bounce = 0.5;
-
-    SpringJoint(PVector pos) {
-        position = pos;
-    }
+    float damp = 0.98;
 
     SpringJoint(int x, int y) {
         position = new PVector(x, y);
+        acceleration = new PVector(0, 0);
+        velocity = new PVector(0, 0);
     }
 
     void update() {
-        velocity.y += 0.05;
-
-        velocity.mult(0.99);
-
+        velocity.add(acceleration);
+        velocity.mult(damp);
         position.add(velocity);
+        acceleration.mult(0);
 
         if(position.x < 0) {
             position.x = 0;
@@ -38,6 +38,12 @@ class SpringJoint {
             position.y = height;
             velocity.y *= -bounce;
         }
+    }
+
+    void applyForce(PVector force) {
+        PVector f = force.get();
+        f.div(mass);
+        acceleration.add(f);
     }
 
     void draw() {

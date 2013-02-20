@@ -1,40 +1,40 @@
 class Spring {
-    SpringJoint joint1;
-    SpringJoint joint2;
+    SpringJoint[] joints;
 
-    float targetDistance;
-    float stiffness = 0.5;
-    float damping = 0.01;
+    float restLength;
+    float strength = 0.8;
 
     Spring(SpringJoint j1, SpringJoint j2) {
-        joint1 = j1;
-        joint2 = j2;
-        targetDistance = joint1.position.dist(joint2.position);
+        joints = new SpringJoint[2];
+
+        joints[0] = j1;
+        joints[1] = j2;
+
+        restLength = joints[0].position.dist(joints[1].position);
     }
 
-    void update() {
-        float distance = joint2.position.dist(joint1.position);
-        float force = (targetDistance - distance) * stiffness * damping;
+    void applyForce() {
+        float currentLength = joints[1].position.dist(joints[0].position);
+        float stretch = currentLength - restLength;
+        float force = -strength * stretch;
 
-        PVector j1v = new PVector(joint1.position.x, joint1.position.y);
-        j1v.sub(joint2.position);
-        j1v.normalize();
-        j1v.mult(force);
+        PVector dir1 = PVector.sub(joints[0].position, joints[1].position);
+        PVector dir2 = PVector.sub(joints[1].position, joints[0].position);
 
-        joint1.velocity.add(j1v);
-        joint1.position.add(joint1.velocity);
+        applyForce(joints[0], dir1, force);
+        applyForce(joints[1], dir2, force);
+    }
 
-        PVector j2v = new PVector(joint2.position.x, joint2.position.y);
-        j2v.sub(joint1.position);
-        j2v.normalize();
-        j2v.mult(force);
+    void applyForce(SpringJoint joint, PVector direction, float magnitude) {
+        PVector force = direction.get();
+        force.normalize();
+        force.mult(magnitude);
 
-        joint2.velocity.add(j2v);
-        joint2.position.add(joint2.velocity);
+        joint.applyForce(force);
     }
 
     void draw() {
         stroke(255, 100);
-        line(joint1.position.x, joint1.position.y, joint2.position.x, joint2.position.y);
+        line(joints[0].position.x, joints[0].position.y, joints[1].position.x, joints[1].position.y);
     }
 };
