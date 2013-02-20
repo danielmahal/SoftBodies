@@ -18,8 +18,29 @@ class Body {
         }
     }
 
-    void addJoint(int x, int y) {
-        joints.add(new SpringJoint(x, y));
+    void addJoint(int id, int x, int y) {
+        joints.add(new SpringJoint(id, x, y));
+    }
+    
+    void removeJoint(int id) {
+      joints.remove(getJointById(id));
+    }
+    
+    void moveJoint(int id, int x, int y) {
+      SpringJoint joint = getJointById(id);
+      joint.position.x = x;
+      joint.position.y = y; 
+    }
+    
+    SpringJoint getJointById(int id) {
+      SpringJoint match = new SpringJoint(0, 0, 0);
+      
+      for(int i = 0; i < joints.size(); i++) {
+        SpringJoint joint = joints.get(i);
+        if(joint.id == id) match = joint;
+      }
+      
+      return match;
     }
 
     void update() {

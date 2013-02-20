@@ -1,13 +1,15 @@
 class SpringJoint {
+    int id;
     PVector position;
     PVector acceleration;
     PVector velocity;
+    
+    final float mass = 10.0;
+    final float bounce = 0.5;
+    final float damp = 0.98;
 
-    float mass = 10.0;
-    float bounce = 0.5;
-    float damp = 0.98;
-
-    SpringJoint(int x, int y) {
+    SpringJoint(int pId, int x, int y) {
+        id = pId;
         position = new PVector(x, y);
         acceleration = new PVector(0, 0);
         velocity = new PVector(0, 0);
