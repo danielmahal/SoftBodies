@@ -1,4 +1,4 @@
-class SpringJoint {
+class Joint {
   int id;
   PVector position;
   PVector acceleration;
@@ -9,7 +9,7 @@ class SpringJoint {
   final float damp = 0.98;
   final float friction = 0.4;
 
-  SpringJoint(int pId, int x, int y) {
+  Joint(int pId, int x, int y) {
     id = pId;
     position = new PVector(x, y);
     acceleration = new PVector(0, 0);
@@ -18,17 +18,17 @@ class SpringJoint {
 
   void update() {
     velocity.add(acceleration);
-    
+
     if(collideWall()) velocity.mult(friction);
-    
+
     velocity.mult(damp);
     position.add(velocity);
     acceleration.mult(0);
   }
-  
+
   boolean collideWall() {
     boolean colliding = false;
-    
+
     if(position.x < 0) {
       colliding = true;
       position.x = 0;
@@ -52,7 +52,7 @@ class SpringJoint {
       position.y = height;
       velocity.y *= -bounce;
     }
-    
+
     return colliding;
   }
 
