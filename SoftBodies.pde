@@ -48,7 +48,7 @@ Body getLastBody() {
 public boolean surfaceTouchEvent(MotionEvent event) {
   int action = event.getActionMasked();
   int count = event.getPointerCount();
-
+  
   if(action == MotionEvent.ACTION_DOWN) {
     bodies.clear();
 

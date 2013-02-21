@@ -2,6 +2,7 @@ class Body {
   List<Joint> joints;
   List<Spring> springs;
   List<int[]> removeTimers;
+  
   boolean creating = true;
 
   Body() {
@@ -70,10 +71,17 @@ class Body {
 
   void moveJoint(int id, int x, int y) {
     Joint joint = getJointById(id);
-
-    joint.velocity = new PVector(x - joint.position.x, y - joint.position.y);
-    joint.position.x = x;
-    joint.position.y = y;
+    
+    PVector position = new PVector(x, y);
+    
+    PVector velocity = position.get();
+    velocity.sub(joint.position);
+    velocity.sub(joint.velocity);
+    velocity.mult(0.2);
+    velocity.add(joint.velocity);
+    
+    joint.velocity = velocity;
+    joint.position = position;
 
     for(Spring spring : getSpringsByJoint(joint)) {
       spring.updateRestLength();
