@@ -1,13 +1,13 @@
 class Body {
-  ArrayList<Joint> joints;
-  ArrayList<Spring> springs;
-  ArrayList<int[]> removeTimers;
+  List<Joint> joints;
+  List<Spring> springs;
+  List<int[]> removeTimers;
   boolean creating = true;
 
   Body() {
-    joints = new ArrayList();
-    springs = new ArrayList();
-    removeTimers = new ArrayList();
+    joints = new CopyOnWriteArrayList();
+    springs = new CopyOnWriteArrayList();
+    removeTimers = new CopyOnWriteArrayList();
   }
 
   void update() {

@@ -1,12 +1,13 @@
 import android.view.MotionEvent;
 import ketai.sensors.*;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-ArrayList<Body> bodies;
+List<Body> bodies;
 Body currentBody;
 
 KetaiSensor sensor;
 PVector accelerometer = new PVector(0, 0, 0);
-
 PVector gravity = new PVector(0, 1);
 
 void setup() {
@@ -17,7 +18,7 @@ void setup() {
     sensor = new KetaiSensor(this);
     sensor.start();
 
-    bodies = new ArrayList();
+    bodies = new CopyOnWriteArrayList();
     bodies.add(new Body());
 }
 
