@@ -3,9 +3,10 @@ class Spring {
 
   float restLength;
   float strength;
-
-//  final float minStrength = 0.2;
-//  final float maxStrength = 1.0;
+  
+  final float strengthDistance = 500;
+  final float minStrength = 0.3;
+  final float maxStrength = 1.0;
 
   Spring(Joint j1, Joint j2) {
     joints = new Joint[2];
@@ -22,7 +23,7 @@ class Spring {
   }
 
   void updateStrength() {
-    strength = min(max(500-restLength, 20), 255) / 255;
+    strength = min(max((strengthDistance - restLength) / strengthDistance, minStrength), maxStrength);
   }
 
   boolean hasJoint(Joint joint) {
