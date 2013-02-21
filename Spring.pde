@@ -2,7 +2,7 @@ class Spring {
   SpringJoint[] joints;
 
   float restLength;
-  float strength = 0.8;
+  float strength;
 
   Spring(SpringJoint j1, SpringJoint j2) {
     joints = new SpringJoint[2];
@@ -11,6 +11,7 @@ class Spring {
     joints[1] = j2;
 
     restLength = joints[0].position.dist(joints[1].position);
+    strength = min(max(500-restLength, 20), 255) / 255;
   }
 
   void applyForce() {
@@ -34,7 +35,7 @@ class Spring {
   }
 
   void draw() {
-    stroke(255, 200);
+    stroke(80, 120, 255, max(100, strength * 255));
     line(joints[0].position.x, joints[0].position.y, joints[1].position.x, joints[1].position.y);
   }
 };
