@@ -1,19 +1,29 @@
 import android.view.MotionEvent;
+import ketai.sensors.*;
 
 ArrayList<Body> bodies;
 Body currentBody;
 
-final PVector gravity = new PVector(0, 1);
+KetaiSensor sensor;
+PVector accelerometer = new PVector(0, 0, 0);
+
+PVector gravity = new PVector(0, 1);
 
 void setup() {
     size(displayWidth, displayHeight, OPENGL);
     frameRate(60.0);
+    orientation(LANDSCAPE);
+    
+    sensor = new KetaiSensor(this);
+    sensor.start();
 
     bodies = new ArrayList();
     bodies.add(new Body());
 }
 
 void update() {
+    gravity = new PVector(-accelerometer.x, accelerometer.y);
+  
     for(int i = 0; i < bodies.size(); i++) {
         Body body = bodies.get(i);
 
@@ -41,6 +51,8 @@ public boolean surfaceTouchEvent(MotionEvent event) {
   int count = event.getPointerCount();
   
   if(action == MotionEvent.ACTION_DOWN) {
+    bodies.clear();
+    
     currentBody = new Body();
     currentBody.addJoint(event.getPointerId(0), int(event.getX(0)), int(event.getY(0)));
     
@@ -74,4 +86,8 @@ public boolean surfaceTouchEvent(MotionEvent event) {
   }
   
   return super.surfaceTouchEvent(event);
+}
+
+void onAccelerometerEvent(float x, float y, float z) {
+  accelerometer = new PVector(x, y, z);
 }

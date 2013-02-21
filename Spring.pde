@@ -34,7 +34,7 @@ class Spring {
   }
 
   void draw() {
-    stroke(255, 100);
+    stroke(255, 200);
     line(joints[0].position.x, joints[0].position.y, joints[1].position.x, joints[1].position.y);
   }
 };

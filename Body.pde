@@ -12,11 +12,16 @@ class Body {
 
   void draw() {
     for(int i = 0; i < joints.size(); i++) {
-      joints.get(i).draw();
-    }
-
-    for(int i = 0; i < springs.size(); i++) {
-      springs.get(i).draw();
+      SpringJoint j1 = joints.get(i);
+      j1.draw();
+      
+      for(int j = 0; j < joints.size(); j++) {
+        SpringJoint j2 = joints.get(j);
+        j2.draw();
+        
+        stroke(255, 200);
+        line(j1.position.x, j1.position.y, j2.position.x, j2.position.y);
+      }
     }
   }
 
