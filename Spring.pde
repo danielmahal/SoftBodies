@@ -3,15 +3,30 @@ class Spring {
 
   float restLength;
   float strength;
+  
+//  final float minStrength = 0.2;
+//  final float maxStrength = 1.0; 
 
   Spring(SpringJoint j1, SpringJoint j2) {
     joints = new SpringJoint[2];
 
     joints[0] = j1;
     joints[1] = j2;
-
+    
+    updateRestLength();
+  }
+  
+  void updateRestLength() {
     restLength = joints[0].position.dist(joints[1].position);
+    updateStrength();
+  }
+  
+  void updateStrength() {
     strength = min(max(500-restLength, 20), 255) / 255;
+  }
+  
+  boolean hasJoint(SpringJoint joint) {
+    return joints[0] == joint || joints[1] == joint;
   }
 
   void applyForce() {

@@ -40,6 +40,8 @@ void draw() {
     for(int i = 0; i < bodies.size(); i++) {
         bodies.get(i).draw();
     }
+    
+    
 }
 
 Body getLastBody() {

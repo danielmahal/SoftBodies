@@ -9,19 +9,44 @@ class Body {
     springs = new ArrayList();
     removeTimers = new ArrayList();
   }
-
-  void draw() {
-    for(int i = 0; i < springs.size(); i++) {
-      springs.get(i).draw();
+  
+  void update() { 
+    for(int[] timer : removeTimers) {
+      if(millis() > timer[1]) {
+        removeJoint(timer[0]);
+        removeTimers.remove(timer);
+      }
     }
     
-    for(int i = 0; i < joints.size(); i++) {
-      joints.get(i).draw();
+    if(!creating) {
+      for(Spring spring : springs) {
+        spring.applyForce();
+      }
+      
+      for(SpringJoint joint : joints) {
+        joint.update();
+      }
+    }
+  }
+
+  void draw() {
+    for(Spring spring : springs) {
+      spring.draw();
+    }
+    
+    for(SpringJoint joint : joints) {
+      joint.draw();
     }
   }
 
   void addJoint(int id, int x, int y) {
-    joints.add(new SpringJoint(id, x, y));
+    SpringJoint joint = new SpringJoint(id, x, y);
+    
+    for(SpringJoint connectJoint : joints) {
+      springs.add(new Spring(joint, connectJoint));
+    }
+    
+    joints.add(joint);
   }
   
   void addRemoveTimer(int id, int delay) {
@@ -34,73 +59,57 @@ class Body {
   }
 
   void removeJoint(int id) {
-    joints.remove(getJointById(id));
+    SpringJoint joint = getJointById(id);
+    
+    for(Spring spring : getSpringsByJoint(joint)) {
+      springs.remove(spring);
+    }
+    
+    joints.remove(joint);
   }
 
   void moveJoint(int id, int x, int y) {
     SpringJoint joint = getJointById(id);
-
+    
     joint.velocity = new PVector(x - joint.position.x, y - joint.position.y);
     joint.position.x = x;
     joint.position.y = y;
+    
+    for(Spring spring : getSpringsByJoint(joint)) {
+      spring.updateRestLength();
+    }
+  }
+  
+  ArrayList<Spring> getSpringsByJoint(SpringJoint joint) {
+    ArrayList<Spring> relatedSprings = new ArrayList();
+    
+    for(Spring spring : springs) {
+      if(spring.hasJoint(joint)) relatedSprings.add(spring);
+    }
+    
+    return relatedSprings;
   }
 
   SpringJoint getJointById(int id) {
     SpringJoint match = new SpringJoint(0, 0, 0);
-
-    for(int i = 0; i < joints.size(); i++) {
-    SpringJoint joint = joints.get(i);
-    if(joint.id == id) match = joint;
+  
+    for(SpringJoint joint : joints) {
+      if(joint.id == id) match = joint;
     }
 
     return match;
   }
 
-  void update() {
-    for(int i = 0; i < removeTimers.size(); i++) {
-      int[] timer = removeTimers.get(i);
-      
-      if(millis() > timer[1]) {
-        removeJoint(timer[0]);
-        removeTimers.remove(i);
-      }
-    }
-    
-    if(!creating) {
-      for(int i = 0; i < springs.size(); i++) {
-        springs.get(i).applyForce();
-      }
-  
-      for(int i = 0; i < joints.size(); i++) {
-        joints.get(i).update();
-      }
-    }
-  }
-
   void applyForce(PVector force) {
     if(creating) return;
-
-    for(int i = 0; i < joints.size(); i++) {
-      joints.get(i).applyForce(force);
+    
+    for(SpringJoint joint : joints) {
+      joint.applyForce(force);
     }
   }
 
   void done() {
     creating = false;
-    
     removeTimers.clear();
-
-    for(int i = 0; i < joints.size(); i++) {
-      SpringJoint j1 = joints.get(i);
-
-      for(int j = i+1; j < joints.size(); j++) {
-        SpringJoint j2 = joints.get(j);
-        float distance = sqrt(pow(j2.position.x - j1.position.x, 2) + pow(j2.position.y - j1.position.y, 2));
-
-        Spring spring = new Spring(j1, j2);
-
-        springs.add(spring);
-      }
-    }
   }
 };
