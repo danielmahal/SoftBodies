@@ -31,12 +31,56 @@ class Body {
     }
 
     void draw() {
+        if(joints.size() > 2) {
+            ArrayList<Joint> hull = getConvexHull();
+            
+            fill(255, 80);
+            noStroke();
+            
+            beginShape();
+            
+            for(Joint joint : hull) {
+                vertex(joint.position.x, joint.position.y);
+            }
+            
+            endShape(CLOSE);
+        }
+        
         for(Spring spring : springs) {
             spring.draw();
         }
 
         for(Joint joint : joints) {
             joint.draw();
+        }
+        
+        fill(0, 0, 255);
+        noStroke();
+        
+        PVector centroid = getCentroid();
+        ellipse(centroid.x, centroid.y, 10, 10);
+        
+        if(joints.size() > 2) {
+            ArrayList<Joint> hull = getConvexHull();
+            
+            noFill();
+            stroke(255, 200);
+            strokeWeight(2);
+            
+            beginShape();
+            
+            for(Joint joint : hull) {
+                vertex(joint.position.x, joint.position.y);
+            }
+            
+            endShape(CLOSE);
+            
+            noStroke();
+            fill(255);
+            
+            for(Joint joint : hull) {
+                ellipse(joint.position.x, joint.position.y, 15, 15);
+            }
         }
     }
 
@@ -106,6 +150,54 @@ class Body {
         }
 
         return match;
+    }
+    
+    PVector getCentroid() {
+        PVector centroid = new PVector();
+        
+        for(Joint joint : joints) {
+            centroid.add(joint.position);
+        }
+        
+        centroid.div(joints.size());
+        
+        return centroid;
+    }
+    
+    ArrayList<Joint> getConvexHull() {
+        ArrayList<Joint> hull = new ArrayList();
+        
+        Joint leftJoint = joints.get(0);
+        
+        for(Joint joint : joints) {
+            if(joint.position.x < leftJoint.position.x) {
+                leftJoint = joint;
+            }
+        }
+        
+        Joint jointOnHull = leftJoint;
+        Joint currentJoint = null;
+        
+        while(currentJoint != leftJoint) {
+            hull.add(jointOnHull);
+            currentJoint = joints.get(0);
+            
+            for(int i = 1; i < joints.size(); i++) {
+                Joint joint = joints.get(i);
+                
+                if(jointOnHull == currentJoint || isLeft(jointOnHull.position, currentJoint.position, joint.position)) {
+                    currentJoint = joint;
+                }
+            }
+            
+            jointOnHull = currentJoint;
+        }
+        
+        return hull;
+    }
+    
+    boolean isLeft(PVector p1, PVector p2, PVector p) {
+        return (p2.x - p1.x) * (p.y - p1.y) - (p.x - p1.x) * (p2.y - p1.y) > 0;
     }
 
     void applyForce(PVector force) {

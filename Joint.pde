@@ -63,7 +63,8 @@ class Joint {
     }
 
     void draw() {
+        fill(255);
         noStroke();
-        ellipse(position.x, position.y, 10, 10);
+        ellipse(position.x, position.y, 5, 5);
     }
 };
