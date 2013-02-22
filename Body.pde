@@ -31,57 +31,51 @@ class Body {
     }
 
     void draw() {
+        drawTriangles();
+        drawSprings();
+        drawJoints();
+        drawCentroid();
+    }
+    
+    void drawTriangles() {
         if(joints.size() > 2) {
             ArrayList<Joint> hull = getConvexHull();
+            PVector centroid = getCentroid();
             
-            fill(255, 80);
-            noStroke();
+            fill(0, 100, 0);
+            stroke(255);
             
-            beginShape();
-            
-            for(Joint joint : hull) {
-                vertex(joint.position.x, joint.position.y);
+            for(int i = 0; i < hull.size(); i++) {
+                Joint j1 = hull.get(i);
+                Joint j2 = hull.get((i + 1) % (hull.size()));
+                
+                beginShape();
+                vertex(centroid.x, centroid.y);
+                vertex(j1.position.x, j1.position.y);
+                vertex(j2.position.x, j2.position.y);
+                endShape(CLOSE);
             }
-            
-            endShape(CLOSE);
         }
-        
-        for(Spring spring : springs) {
-            spring.draw();
-        }
-
-        for(Joint joint : joints) {
-            joint.draw();
-        }
-        
+    }
+    
+    void drawCentroid() {
         fill(0, 0, 255);
         noStroke();
         
         PVector centroid = getCentroid();
         ellipse(centroid.x, centroid.y, 10, 10);
-        
-        if(joints.size() > 2) {
-            ArrayList<Joint> hull = getConvexHull();
-            
-            noFill();
-            stroke(255, 200);
-            strokeWeight(2);
-            
-            beginShape();
-            
-            for(Joint joint : hull) {
-                vertex(joint.position.x, joint.position.y);
-            }
-            
-            endShape(CLOSE);
-            
-            noStroke();
-            fill(255);
-            
-            for(Joint joint : hull) {
-                ellipse(joint.position.x, joint.position.y, 15, 15);
-            }
-        }
+    }
+    
+    void drawSprings() {
+        for(Spring spring : springs) {
+            spring.draw();
+        }    
+    }
+    
+    void drawJoints() {
+        for(Joint joint : joints) {
+            joint.draw();
+        }    
     }
 
     void addJoint(int id, int x, int y) {
